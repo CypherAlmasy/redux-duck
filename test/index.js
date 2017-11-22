@@ -51,13 +51,15 @@ test('define type', t => {
 });
 
 test('create action creator', t => {
-  t.plan(3);
+  t.plan(4);
 
   const duck = createDuck('test', 'redux-duck');
 
   const type = duck.defineType('TYPE');
 
   const createType = duck.createAction(type);
+
+  const createTypeWithPayload = duck.createAction(type, data => ({ data }));
 
   const testData = {
     id: 123,
@@ -67,6 +69,8 @@ test('create action creator', t => {
   const action = createType(testData);
 
   const emptyActon = createType();
+
+  const customAction = createTypeWithPayload(5);
 
   t.equals(
     typeof createType,
@@ -89,6 +93,15 @@ test('create action creator', t => {
       type,
     },
     'it should be able to create an action without payload'
+  );
+
+  t.deepEquals(
+    customAction,
+    {
+      type,
+      payload: { data: 5 },
+    },
+    'it should optionally accept a custom payload creation function to create payloads',
   );
 });
 
